@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { User } from '../models/model.js';
+import { where } from 'sequelize';
 
 const getCurrentTimeStamp = () => {
     return new Date().toString();
@@ -99,6 +100,38 @@ export const login = async (req, res) => {
  }
 
 
+}
+
+export const logout = async (req, res) =>{
+   const token =  req.cookies.auth
+
+   if(!token) {
+    return res.status(204).json({
+        msg:'token is required',
+    })
+   }
+    const user = await User.findOne({
+        where : {
+            refresh_token : token,
+        }
+    });
+
+if(!user) {
+    return res.status(403).json({
+        msg : 'User not found'
+    });
+}
+
+    await User.update({refresh_token : null}, {
+        where: {
+            id : user.id,
+        }
+    });
+
+    res.clearCookie('auth');
+    res.status(200).json({
+        msg : 'logout successful'
+    })
 }
 
 export const showUser = async (req, res) => { 
