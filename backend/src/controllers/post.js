@@ -1,7 +1,7 @@
 import randomstring from 'randomstring';
 import slug from 'slug';
 import jwt from 'jsonwebtoken';
-import { Post } from '../models/model.js';
+import { Post, User } from '../models/model.js';
 
 
 export const create = async (req, res) => {
@@ -106,4 +106,26 @@ export const update = async (req, res) => {
             err : error.message
         })
     }
+}
+
+export const show = async (req, res) => {
+
+try {
+    const posts = await Post.findAll({
+        include : [{
+            model: User,
+            as : 'user',
+            attributes : ['name', 'email']
+        }]
+    });
+    return res.status(200).json({
+        data : posts
+    })
+} catch (error) {
+    return res.status(500).json({
+        msg : 'failed get posts',
+        err : error.message
+    })
+}
+
 }
