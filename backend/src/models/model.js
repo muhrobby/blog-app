@@ -73,8 +73,8 @@ export const Post = db.define('posts', {
     },
     thumbnail :{
         type : dataType.STRING,
-   
-            allowNull : true,
+        allowNull : true,
+        unique : true,
         
 
     }

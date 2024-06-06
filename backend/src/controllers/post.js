@@ -17,7 +17,7 @@ export const create = async (req, res) => {
         const decoded = jwt.verify(token, process.env.SECRET_TOKEN)
 
         const {title, content} = req.body
-    
+        const thumbnail = req.file.path
         const slugTitle = slug(title)
         const postId = new Date().getTime()+randomstring.generate(10)
         const data = {
@@ -25,7 +25,8 @@ export const create = async (req, res) => {
             content,
             slug : slugTitle,
             post_id : postId,
-            userId : decoded.id
+            userId : decoded.id,
+            thumbnail
         }
     
     await Post.create(data)

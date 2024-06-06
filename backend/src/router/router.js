@@ -4,10 +4,9 @@ import { login, logout, register, showUser } from '../controllers/user.js';
 import { verifyToken } from '../middleware/verifyToken.js';
 import { token } from '../middleware/token.js';
 import { create } from '../controllers/post.js';
-
+import { upload } from '../utils/image.js';
 
 const router = express.Router();
-
 
 router.get('/', Home)
 
@@ -21,7 +20,7 @@ router.delete('/logout', logout)
 
 
 // POST
-router.post('/post/create', create)
+router.post('/post/create',upload.single('thumbnail'), create)
 
 
 
