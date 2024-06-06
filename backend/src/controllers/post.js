@@ -2,6 +2,7 @@ import randomstring from 'randomstring';
 import slug from 'slug';
 import jwt from 'jsonwebtoken';
 import { Post, User } from '../models/model.js';
+import { token } from '../middleware/token.js';
 
 
 export const create = async (req, res) => {
@@ -128,4 +129,39 @@ try {
     })
 }
 
+}
+
+export const showByUser = async (req, res) => {
+    const token = req.cookies.auth
+    if (!token) {
+        return res.status(403).json({
+            msg : 'token is required'
+        })
+    }
+
+    try {
+        
+        const decoded = jwt.verify(token, process.env.SECRET_TOKEN)
+
+        if (!decoded) {
+            return res.status(403).json({
+                msg : 'token not valid'
+            })
+        }
+        const post = await Post.findAll({
+            where : {
+                userId : decoded.id
+            }
+        });
+
+        return res.status(200).json({
+            msg : `success get post ${decoded.name}`,
+            data : post
+        })
+    } catch (error) {
+        return res.status(500).json({
+            msg : `failed get post`,
+            err : error.message
+        })
+    }
 }

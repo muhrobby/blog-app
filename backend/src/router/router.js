@@ -3,7 +3,7 @@ import { Home } from '../controllers/home.js';
 import { login, logout, register, showUser } from '../controllers/user.js';
 import { verifyToken } from '../middleware/verifyToken.js';
 import { token } from '../middleware/token.js';
-import { create, show, update } from '../controllers/post.js';
+import { create, show, showByUser, update } from '../controllers/post.js';
 import { upload } from '../utils/image.js';
 
 const router = express.Router();
@@ -12,18 +12,22 @@ router.get('/', Home)
 
 
 // USER
-router.get('/users',verifyToken, showUser)
-router.get('/token',token)
-router.post('/register', register)
-router.post('/login', login)
-router.delete('/logout', logout)
+const userRouter = express.Router();
+userRouter.get('/users',verifyToken, showUser)
+userRouter.get('/token',token)
+userRouter.post('/register', register)
+userRouter.post('/login', login)
+userRouter.delete('/logout', logout)
 
 
 // POST
-router.post('/post/create',upload, create)
-router.post('/post/update/:postId',upload, update)
-router.get('/posts',show)
+const postRouter = express.Router()
+postRouter.post('/post/create',upload, create)
+postRouter.post('/post/update/:postId',upload, update)
+postRouter.get('/posts',show)
+postRouter.get('/postUser',showByUser)
 
-
+router.use('/api', userRouter)
+router.use('/api',postRouter)
 
 export default router;
