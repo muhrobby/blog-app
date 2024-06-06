@@ -3,7 +3,7 @@ import { Home } from '../controllers/home.js';
 import { login, logout, register, showUser } from '../controllers/user.js';
 import { verifyToken } from '../middleware/verifyToken.js';
 import { token } from '../middleware/token.js';
-import { create, show, showByUser, update } from '../controllers/post.js';
+import { create, deletePost, show, showByUser, update } from '../controllers/post.js';
 import { upload } from '../utils/image.js';
 
 const router = express.Router();
@@ -26,6 +26,7 @@ postRouter.post('/post/create',upload, create)
 postRouter.post('/post/update/:postId',upload, update)
 postRouter.get('/posts',show)
 postRouter.get('/postUser',showByUser)
+postRouter.delete('/post/:postId',deletePost)
 
 router.use('/api', userRouter)
 router.use('/api',postRouter)

@@ -151,7 +151,4 @@ export const showUser = async (req, res) => {
         })
     }
 
-
-
-
 }

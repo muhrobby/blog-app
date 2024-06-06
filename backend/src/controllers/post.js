@@ -165,3 +165,47 @@ export const showByUser = async (req, res) => {
         })
     }
 }
+
+export const deletePost = async (req, res) => {
+    const token = req.cookies.auth
+    if (!token) {
+        return res.status(403).json({
+            msg : 'token is required'
+        })
+    }
+
+    try {
+        
+        const decoded = jwt.verify(token, process.env.SECRET_TOKEN)
+        if (!decoded) {
+            return res.status(403).json({
+                msg : 'token not valid'
+            })
+        }
+
+        const post = await Post.findOne({
+            where : {
+                post_id : req.params.postId,
+            }
+        });
+
+        if (post.userId !== decoded.id) {
+            return res.status(401).json({
+                msg :" you not allowed to delete this post"
+            })
+        }
+
+        await Post.destroy({where : {
+            post_id : req.params.postId
+        }})
+
+        return res.status(200).json({
+            msg : 'post deleted successfully'
+        })
+    } catch (error) {
+        return res.status(500).json({
+        msg : 'error deleting post',
+        err : error.message
+        })
+    }
+}
