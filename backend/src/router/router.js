@@ -3,7 +3,7 @@ import { Home } from '../controllers/home.js';
 import { login, logout, register, showUser } from '../controllers/user.js';
 import { verifyToken } from '../middleware/verifyToken.js';
 import { token } from '../middleware/token.js';
-import { create } from '../controllers/post.js';
+import { create, update } from '../controllers/post.js';
 import { upload } from '../utils/image.js';
 
 const router = express.Router();
@@ -20,7 +20,8 @@ router.delete('/logout', logout)
 
 
 // POST
-router.post('/post/create',upload.single('thumbnail'), create)
+router.post('/post/create',upload, create)
+router.post('/post/update/:postId',upload, update)
 
 
 

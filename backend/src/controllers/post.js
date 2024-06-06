@@ -5,13 +5,15 @@ import { Post } from '../models/model.js';
 
 
 export const create = async (req, res) => {
-
+    
     const token = req.cookies.auth
     if (!token) {
         return res.status(403).json({
             msg : 'Invalid token provided'
         })
     }
+
+    if(!req.file) return res.status(500).json({msg : 'image not found'})
 
     try {
         const decoded = jwt.verify(token, process.env.SECRET_TOKEN)
@@ -43,4 +45,65 @@ export const create = async (req, res) => {
     }
    
 
+}
+
+
+export const update = async (req, res) => { 
+    const token = req.cookies.auth
+
+    if (!token) {
+        return res.status(403).json({
+            msg : 'token not provided'
+        })
+    }
+
+    if (!req.file) {
+        return res.status(500).json({
+            msg : 'image not found',
+        })
+    }
+
+    
+    try {
+        const decoded = jwt.verify(token, process.env.SECRET_TOKEN)
+
+        const postId = req.params.postId
+        const {title, content} = req.body
+        const thumbnail = req.file.path
+
+
+        const user = await Post.findOne({
+            where : {
+                post_id : postId,
+            }
+        });
+
+        if (user.userId !== decoded.id) {
+            return res.status(401).json({
+                msg :" you not allowed to update this post"
+            })
+        }
+
+        await Post.update({
+            title,
+            content,
+            slug : slug(title),
+            thumbnail
+        },{
+            where : {
+                post_id : postId
+            }
+        })
+
+        return res.status(200).json({
+            msg : 'success to update post',
+        })
+
+        
+    } catch (error) {
+        return res.status(500).json({
+            msg : 'error updating post',
+            err : error.message
+        })
+    }
 }
