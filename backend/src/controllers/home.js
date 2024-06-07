@@ -1,5 +1,5 @@
 export const Home = (req, res) => {
-    res.json({
-        msh : "hello world"
-    })
-}
+  res.json({
+    ms: "hello world",
+  });
+};
