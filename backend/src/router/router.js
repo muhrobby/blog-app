@@ -7,6 +7,7 @@ import {
   create,
   deletePost,
   show,
+  showById,
   showByUser,
   update,
 } from "../controllers/post.js";
@@ -26,11 +27,12 @@ userRouter.delete("/logout", logout);
 
 // POST
 const postRouter = express.Router();
-postRouter.post("/post/create", upload, create);
-postRouter.post("/post/update/:postId", upload, update);
+postRouter.post("/post/create",verifyToken, upload, create);
+postRouter.post("/post/update/:postId",verifyToken, upload, update);
 postRouter.get("/posts", show);
+postRouter.get("/posts/:id",verifyToken, showById);
 postRouter.get("/postUser",verifyToken,showByUser);
-postRouter.delete("/post/:postId", deletePost);
+postRouter.delete("/post/:postId",verifyToken, deletePost);
 
 router.use("/api", userRouter);
 router.use("/api", postRouter);

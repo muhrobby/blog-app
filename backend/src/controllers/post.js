@@ -124,6 +124,55 @@ export const show = async (req, res) => {
   }
 };
 
+export const showById = async (req, res) => {
+  const id = req.params.id
+  const token = req.cookies.auth
+  if (!token) {
+    return res.status(403).json({
+     msg: "token is required",
+   });
+ }
+
+  try {
+
+    const decoded = jwt.verify(token, process.env.SECRET_TOKEN)
+
+    const post = await Post.findOne({where : {
+      post_id : id
+    }
+
+    })
+    if (!post) {
+      return res.status(500).json({
+        msg : "failed to get data",
+        err : error.message
+    })
+    }
+
+    if (post.userId !== decoded.id) {
+      return res.status(403).json({
+        msg : 'you are not allowed to Show Data'
+      })
+    }
+
+    return res.status(200).json({
+      msg : "success get data",
+      data : post,
+      user : {
+        name: decoded.name,
+        email : decoded.email
+      }
+    })
+  } catch (error) {
+    
+    return res.status(500).json({
+      msg : "failed to get data",
+      err : error.message
+  })
+}
+
+}
+
 export const showByUser = async (req, res) => {
   const token = req.cookies.auth;
   if (!token) {

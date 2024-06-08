@@ -73,7 +73,7 @@ export const login = async (req, res) => {
     };
 
     const refresh_token = jwt.sign(data, process.env.SECRET_TOKEN, {
-      expiresIn: "30s",
+      expiresIn: "1h",
     });
 
     await User.update(
